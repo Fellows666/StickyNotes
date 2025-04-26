@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Productivity Stream To-Do Lists</title>
+    <style>
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #331000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow-y: hidden; /* Hide vertical scrollbar */
+            overflow-x: hidden; /* Hide horizontal scrollbar */
+        }
+
+        #child{
+            width: 100%;
+            height: 100%;
+            overflow-y: hidden; /* Hide vertical scrollbar */
+            overflow-x: hidden; /* Hide horizontal scrollbar */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #a84605;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            height: 40vh;
+        }
+
+        .list-section {
+            width: 80%;
+            background: #000000;
+            border-radius: 12px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 40vh;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .sticky-note {
+            background: #f0953a; /* Default pastel orange */
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+            transform: rotate(-0.5deg);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            /* REMOVE opacity and animation from here */
+        }   
+
+
+        .viewer-task {
+            background: #c09a28; /* Pastel gold */
+            transform: rotate(0.5deg);
+        }
+
+        @keyframes fadeInWiggle {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05) rotate(3deg);
+            }
+            70% {
+                transform: scale(0.98) rotate(-2deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Productivity Stream Tasks</h1>
+
+    <div class="container">
+        <div class="list-section auto-scroll" id="streamer-list">
+            <!-- Streamer's Tasks go here -->
+            <div class="sticky-note">Finish Editing Video</div>
+        </div>
+
+        <div class="list-section auto-scroll" id="viewer-list">
+            <!-- Viewer Tasks go here -->
+            <div class="sticky-note viewer-task">[ChatUser1] - Hydrate!</div>
+        </div>
+    </div>
+
+    <script>
+        // Simulating dynamic adding tasks (normally triggered by WebSocket/chat commands)
+
+        function addStreamerTask(text) {
+            const list = document.getElementById('streamer-list');
+            const note = document.createElement('div');
+            note.className = 'sticky-note';
+            note.textContent = text;
+            list.appendChild(note);
+        }
+
+        function addViewerTask(username, text) {
+            const list = document.getElementById('viewer-list');
+            const note = document.createElement('div');
+            note.className = 'sticky-note viewer-task';
+            note.textContent = `[${username}] - ${text}`;
+            list.appendChild(note);
+        }
+
+        function removeViewerTask(index) {
+            const list = document.getElementById('viewer-list');
+            if (list.children[index]) {
+                list.removeChild(list.children[index]);
+            }
+        }
+
+        
+
+        function autoScrollList(listId) {
+    const list = document.getElementById(listId);
+    let scrollAmount = 0;
+    let scrollDown = true;
+
+    setInterval(() => {
+        if (scrollDown) {
+            list.scrollTop += 1;
+            scrollAmount += 1;
+            if (list.scrollTop + list.clientHeight >= list.scrollHeight) {
+                scrollDown = false;
+            }
+        } else {
+                list.scrollTop -= 1;
+                scrollAmount -= 1;
+                    if (list.scrollTop <= 0) {
+                    scrollDown = true;
+                    }
+                }
+            }, 250); // smaller = faster scroll (lower = slower)
+        }
+
+        // Start auto scrolling both lists
+        autoScrollList('streamer-list');
+        autoScrollList('viewer-list');
+        // Example usage (for testing)
+        // setTimeout(() => addViewerTask('CoolViewer', 'Take a stretch break'), 2000);
+        // setTimeout(() => removeViewerTask(0), 5000);
+
+    </script>
+
+</body>
+</html>
