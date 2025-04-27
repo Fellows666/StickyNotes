@@ -43,3 +43,28 @@ function autoScrollList(listId) {
 // Start auto scrolling both lists
 autoScrollList('streamer-list');
 autoScrollList('viewer-list');
+
+// Create a WebSocket connection
+const socket = new WebSocket('ws://localhost:8080'); // Ensure Streamer.bot uses this port
+
+// When connected
+socket.onopen = () => {
+    console.log('WebSocket connected!');
+};
+
+// When receiving a message
+socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+
+    // Check for a specific action and trigger the corresponding function
+    if (message.action === 'addTask') {
+        addViewerTask(message.username, message.text);
+    } else if (message.action === 'removeTask') {
+        removeViewerTask(message.index);
+    }
+};
+
+// Example function to send data to the page
+function sendMessage(action, data) {
+    socket.send(JSON.stringify({ action, ...data }));
+}
